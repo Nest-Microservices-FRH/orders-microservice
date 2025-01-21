@@ -4,6 +4,8 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
+import { PaginationDto } from 'src/common';
+import { OrderPaginationDto } from './dto';
 
 @Controller()
 export class OrdersController {
@@ -15,8 +17,10 @@ export class OrdersController {
     }
 
   @MessagePattern('findAllOrders')
-  findAll() {
-      return this.ordersService.findAll();
+  findAll(
+    @Payload() paginationDto: OrderPaginationDto,
+  ) {
+      return this.ordersService.findAll(paginationDto);
   }
 
   @MessagePattern('findOneOrder')
