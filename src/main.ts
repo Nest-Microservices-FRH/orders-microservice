@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { envs } from './config';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
@@ -14,6 +14,13 @@ async function bootstrap() {
             port: envs.port,
         },
     });
+
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist           : true,
+            forbidNonWhitelisted: true,
+        }),
+    );
 
     await app.listen();
     logger.log(`Orders Microservice is running on port: ${envs.port}`);
