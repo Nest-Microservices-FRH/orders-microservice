@@ -1,15 +1,16 @@
-import { Controller, NotImplementedException } from '@nestjs/common';
+import { Controller, NotImplementedException, ParseUUIDPipe } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { Order } from './entities/order.entity';
 
 @Controller()
 export class OrdersController {
     constructor(private readonly ordersService: OrdersService) {}
 
   @MessagePattern('createOrder')
-    create(@Payload() createOrderDto: CreateOrderDto) {
+    create(@Payload() createOrderDto: CreateOrderDto): Promise<Order> {
         return this.ordersService.create(createOrderDto);
     }
 
@@ -19,7 +20,7 @@ export class OrdersController {
   }
 
   @MessagePattern('findOneOrder')
-  findOne(@Payload() id: number) {
+  findOne(@Payload('id', ParseUUIDPipe) id: string): Promise<Order> {
       return this.ordersService.findOne(id);
   }
 
