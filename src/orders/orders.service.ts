@@ -14,8 +14,14 @@ export class OrdersService {
         private orderModel: typeof Order,
     ) {}
 
-    create(createOrderDto: CreateOrderDto): Promise<Order> {
-        return this.orderModel.create(createOrderDto);
+    //: Promise<Order>
+    create(createOrderDto: CreateOrderDto) {
+
+        return {
+            service: 'Orders Microservice',
+            createOrderDto,
+        };
+        //return this.orderModel.create(createOrderDto);
     }
 
     async findAll(

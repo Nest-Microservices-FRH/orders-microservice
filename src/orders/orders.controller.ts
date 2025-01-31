@@ -11,8 +11,9 @@ import { ChangeOrderStatusDto, OrderPaginationDto } from './dto';
 export class OrdersController {
     constructor(private readonly ordersService: OrdersService) {}
 
+    //: Promise<Order>
   @MessagePattern('createOrder')
-    create(@Payload() createOrderDto: CreateOrderDto): Promise<Order> {
+    create(@Payload() createOrderDto: CreateOrderDto) {
         return this.ordersService.create(createOrderDto);
     }
 
