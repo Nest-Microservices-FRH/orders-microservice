@@ -3,7 +3,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Order } from './entities/order.entity';
 import { RpcException } from '@nestjs/microservices';
-import { OrderPaginationDto } from './dto';
+import { ChangeOrderStatusDto, OrderPaginationDto } from './dto';
 import { PaginatedOrders } from './entities';
 
 @Injectable()
@@ -55,5 +55,25 @@ export class OrdersService {
         }
 
         return order;
+    }
+
+    async changeStatus(changeOrderStatusDto: ChangeOrderStatusDto): Promise<Order> {
+        const { id, status } = changeOrderStatusDto;
+
+        const order = await this.findOne(id);
+
+        if (order.status === status) {
+            throw new RpcException({
+                status : HttpStatus.BAD_REQUEST,
+                message: `Order is already ${status}`,
+            });
+        }
+        await this.orderModel.update({
+            status,
+        }, {
+            where: { id },
+        });
+
+        return await this.findOne(id);
     }
 }
