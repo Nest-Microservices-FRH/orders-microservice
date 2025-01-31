@@ -3,6 +3,7 @@ import { OrdersModule } from './orders/orders.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { envs } from './config';
 import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
 
 @Module({
     imports: [
@@ -24,7 +25,10 @@ import { Order } from './orders/entities/order.entity';
                     rejectUnauthorized: false, // Permite certificados autofirmados
                 },
             },
-            models: [Order],
+            models: [
+                Order,
+                OrderItem,
+            ],
         }),
     ],
     controllers: [],

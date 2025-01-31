@@ -1,5 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { Column, Model, Table } from 'sequelize-typescript';
+import { OrderItem } from './order-item.entity';
+import { HasMany } from 'sequelize-typescript';
 
 @Table({
     modelName      : 'orders',
@@ -54,6 +56,9 @@ export class Order extends Model<Order>{
         type     : DataTypes.DATE,
     })
         paidAt: string;
+
+    @HasMany(() => OrderItem)
+        orderItems: OrderItem[];
 
     @Column({
         field       : 'createdAt',
