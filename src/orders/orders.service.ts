@@ -1,10 +1,12 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Order } from './entities/order.entity';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { ChangeOrderStatusDto, OrderPaginationDto } from './dto';
 import { PaginatedOrders } from './entities';
+import { PRODUCT_SERVICE } from 'src/config';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class OrdersService {
@@ -12,16 +14,17 @@ export class OrdersService {
     constructor(
         @InjectModel(Order)
         private orderModel: typeof Order,
+        @Inject(PRODUCT_SERVICE) private readonly productsClient: ClientProxy,
     ) {}
 
     //: Promise<Order>
-    create(createOrderDto: CreateOrderDto) {
+    async create(createOrderDto: CreateOrderDto) {
 
-        return {
-            service: 'Orders Microservice',
-            createOrderDto,
-        };
-        //return this.orderModel.create(createOrderDto);
+        const products = await firstValueFrom(
+            this.productsClient.send({ cmd: 'validate_products' },[5,6]),
+        );
+
+        return products;
     }
 
     async findAll(
