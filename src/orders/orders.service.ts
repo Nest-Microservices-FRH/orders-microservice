@@ -7,6 +7,7 @@ import { ChangeOrderStatusDto, OrderPaginationDto } from './dto';
 import { PaginatedOrders } from './entities';
 import { PRODUCT_SERVICE } from 'src/config';
 import { firstValueFrom } from 'rxjs';
+import { OrderItem } from './entities/order-item.entity';
 
 @Injectable()
 export class OrdersService {
@@ -14,6 +15,8 @@ export class OrdersService {
     constructor(
         @InjectModel(Order)
         private orderModel: typeof Order,
+        @InjectModel(OrderItem)
+        private orderItemModel: typeof OrderItem,
         @Inject(PRODUCT_SERVICE) private readonly productsClient: ClientProxy,
     ) {}
 

@@ -5,12 +5,14 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Order } from './entities/order.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { envs, PRODUCT_SERVICE } from 'src/config';
+import { OrderItem } from './entities/order-item.entity';
 
 @Module({
     controllers: [OrdersController],
     providers  : [OrdersService],
     imports    : [
         SequelizeModule.forFeature([Order]),
+        SequelizeModule.forFeature([OrderItem]),
         ClientsModule.register([
             {
                 name     : PRODUCT_SERVICE,

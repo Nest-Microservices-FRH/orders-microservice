@@ -15,7 +15,7 @@ export class OrderItem extends Model<OrderItem>{
         type        : DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
     })
-        id: string;
+        id?: string;
 
     @ForeignKey(() => Order)
     @Column({
@@ -23,10 +23,10 @@ export class OrderItem extends Model<OrderItem>{
         allowNull: true,
         type     : DataTypes.UUID,
     })
-        orderId: string;
+        orderId?: string;
 
     @BelongsTo(() => Order)
-        order: Order;
+        order?: Order;
 
     @Column({
         field    : 'productId',
@@ -56,12 +56,12 @@ export class OrderItem extends Model<OrderItem>{
         type        : DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     })
-        createdAt: string;
+        createdAt?: string;
 
     @Column({
         field    : 'updatedAt',
         allowNull: true,
         type     : DataTypes.DATE,
     })
-        updatedAt: string;
+        updatedAt?: string;
 }
