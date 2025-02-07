@@ -44,24 +44,24 @@ export class OrdersService {
                 return acc + orderItem.quantity;
             }, 0);
 
-            // // Crear instancias de OrderItem
-            // const orderItems = await Promise.all(createOrderDto.items.map(async item => {
-            //     const product = products.find(product => product.id === item.productId);
-            //     return this.orderItemModel.build({
-            //         productId: item.productId,
-            //         quantity : item.quantity,
-            //         price    : product.price,
-            //     // Puedes agregar más propiedades si es necesario
-            //     });
-            // }));
+            // Crear instancias de OrderItem
+            const orderItems = await Promise.all(createOrderDto.items.map(async item => {
+                const product = products.find(product => product.id === item.productId);
+                return this.orderItemModel.build({
+                    productId: item.productId,
+                    quantity : item.quantity,
+                    price    : product.price,
+                // Puedes agregar más propiedades si es necesario
+                });
+            }));
 
             // create db transaction
             const order = await this.orderModel.create({
                 totalAmount,
                 totalItems,
-                //orderItems,
+                orderItems,
             }, {
-                include: [{ model: OrderItem }],
+                include: [OrderItem],
             });
 
             return order;
