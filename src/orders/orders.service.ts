@@ -106,8 +106,10 @@ export class OrdersService {
         };
     }
 
-    async findOne(id: string): Promise<Order> {
-        const order = await this.orderModel.findByPk(id);
+    async findOne(id: string) {
+        const order = await this.orderModel.findByPk(id, {
+            include: [OrderItem],
+        });
 
         if (!order) {
             throw new RpcException({
@@ -116,10 +118,21 @@ export class OrdersService {
             });
         }
 
-        return order;
+        const productIds = order.orderItems.map(item => item.productId);
+        const products = await firstValueFrom(
+            this.productsClient.send({ cmd: 'validate_products' }, productIds),
+        );
+
+        return {
+            ...order.toJSON(),
+            orderItems: order.orderItems.map(item => ({
+                ...item.toJSON(),
+                name: products.find(product => product.id === item.productId).name,
+            })),
+        };
     }
 
-    async changeStatus(changeOrderStatusDto: ChangeOrderStatusDto): Promise<Order> {
+    async changeStatus(changeOrderStatusDto: ChangeOrderStatusDto) {
         const { id, status } = changeOrderStatusDto;
 
         const order = await this.findOne(id);
