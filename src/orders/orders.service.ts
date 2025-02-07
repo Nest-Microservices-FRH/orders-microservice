@@ -23,11 +23,55 @@ export class OrdersService {
     //: Promise<Order>
     async create(createOrderDto: CreateOrderDto) {
 
-        const products = await firstValueFrom(
-            this.productsClient.send({ cmd: 'validate_products' },[5,6]),
-        );
+        try {
+            // group products by id
+            const productIds = createOrderDto.items.map(product => product.productId);
+            // validate products
+            const products = await firstValueFrom(
+                this.productsClient.send({ cmd: 'validate_products' }, productIds),
+            );
 
-        return products;
+            const totalAmount = createOrderDto.items.reduce((acc, orderItem) => {
+                const price = products.find(
+                    product => product.id === orderItem.productId,
+                ).price;
+
+                return price * orderItem.quantity;
+
+            }, 0);
+
+            const totalItems = createOrderDto.items.reduce((acc, orderItem) => {
+                return acc + orderItem.quantity;
+            }, 0);
+
+            // // Crear instancias de OrderItem
+            // const orderItems = await Promise.all(createOrderDto.items.map(async item => {
+            //     const product = products.find(product => product.id === item.productId);
+            //     return this.orderItemModel.build({
+            //         productId: item.productId,
+            //         quantity : item.quantity,
+            //         price    : product.price,
+            //     // Puedes agregar más propiedades si es necesario
+            //     });
+            // }));
+
+            // create db transaction
+            const order = await this.orderModel.create({
+                totalAmount,
+                totalItems,
+                //orderItems,
+            }, {
+                include: [{ model: OrderItem }],
+            });
+
+            return order;
+        } catch {
+            throw new RpcException({
+                status : HttpStatus.BAD_REQUEST,
+                message: 'Check logs for more details',
+            });
+        }
+
     }
 
     async findAll(
