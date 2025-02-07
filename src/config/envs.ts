@@ -13,6 +13,8 @@ interface EnvVars {
   LOGGING: boolean;
   DB_SYNCHRONIZE: boolean;
   DB_AUTOLOADMODELS: boolean;
+  PRODUCTS_MS_HOST: string;
+  PRODUCTS_MS_PORT: number;
 }
 
 const envsSchema = joi
@@ -27,6 +29,8 @@ const envsSchema = joi
         LOGGING          : joi.boolean().required(),
         DB_SYNCHRONIZE   : joi.boolean().required(),
         DB_AUTOLOADMODELS: joi.boolean().required(),
+        PRODUCTS_MS_HOST : joi.string().required(),
+        PRODUCTS_MS_PORT : joi.number().required(),
     })
     .unknown(true);
 
@@ -49,4 +53,6 @@ export const envs = {
     logging       : envVars.LOGGING,
     synchronize   : envVars.DB_SYNCHRONIZE,
     autoLoadModels: envVars.DB_AUTOLOADMODELS,
+    productsMsHost: envVars.PRODUCTS_MS_HOST,
+    productsMsPort: envVars.PRODUCTS_MS_PORT,
 };
