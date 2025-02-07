@@ -64,7 +64,13 @@ export class OrdersService {
                 include: [OrderItem],
             });
 
-            return order;
+            return {
+                ...order.toJSON(),
+                orderItems: orderItems.map(item => ({
+                    ...item.toJSON(),
+                    name: products.find(product => product.id === item.productId).name,
+                })),
+            };
         } catch {
             throw new RpcException({
                 status : HttpStatus.BAD_REQUEST,
