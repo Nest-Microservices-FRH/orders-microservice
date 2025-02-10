@@ -19,12 +19,12 @@ import { OrderItem } from './orders/entities/order-item.entity';
             synchronize   : envs.synchronize,
             logging       : envs.logging ? console.log : false,
             //ssl           : false, // Indica que SSL está habilitado
-            dialectOptions: {
-                ssl: {
-                    require           : true, // Requiere conexión SSL
-                    rejectUnauthorized: false, // Permite certificados autofirmados
-                },
-            },
+            // dialectOptions: {
+            //     ssl: {
+            //         require           : true, // Requiere conexión SSL
+            //         rejectUnauthorized: false, // Permite certificados autofirmados
+            //     },
+            // },
             models: [
                 Order,
                 OrderItem,
