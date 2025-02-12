@@ -5,7 +5,7 @@ import { Order } from './entities/order.entity';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { ChangeOrderStatusDto, OrderPaginationDto } from './dto';
 import { PaginatedOrders } from './entities';
-import { PRODUCT_SERVICE } from 'src/config';
+import { NATS_SERVICE } from 'src/config';
 import { firstValueFrom } from 'rxjs';
 import { OrderItem } from './entities/order-item.entity';
 
@@ -17,7 +17,7 @@ export class OrdersService {
         private orderModel: typeof Order,
         @InjectModel(OrderItem)
         private orderItemModel: typeof OrderItem,
-        @Inject(PRODUCT_SERVICE) private readonly productsClient: ClientProxy,
+        @Inject(NATS_SERVICE) private readonly client: ClientProxy,
     ) {}
 
     //: Promise<Order>
@@ -28,7 +28,7 @@ export class OrdersService {
             const productIds = createOrderDto.items.map(product => product.productId);
             // validate products
             const products = await firstValueFrom(
-                this.productsClient.send({ cmd: 'validate_products' }, productIds),
+                this.client.send({ cmd: 'validate_products' }, productIds),
             );
 
             const totalAmount = createOrderDto.items.reduce((acc, orderItem) => {
@@ -120,7 +120,7 @@ export class OrdersService {
 
         const productIds = order.orderItems.map(item => item.productId);
         const products = await firstValueFrom(
-            this.productsClient.send({ cmd: 'validate_products' }, productIds),
+            this.client.send({ cmd: 'validate_products' }, productIds),
         );
 
         return {
