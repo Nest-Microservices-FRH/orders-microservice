@@ -13,8 +13,7 @@ interface EnvVars {
   LOGGING: boolean;
   DB_SYNCHRONIZE: boolean;
   DB_AUTOLOADMODELS: boolean;
-  PRODUCTS_MS_HOST: string;
-  PRODUCTS_MS_PORT: number;
+  NATS_SERVERS: string[];
 }
 
 const envsSchema = joi
@@ -29,12 +28,14 @@ const envsSchema = joi
         LOGGING          : joi.boolean().required(),
         DB_SYNCHRONIZE   : joi.boolean().required(),
         DB_AUTOLOADMODELS: joi.boolean().required(),
-        PRODUCTS_MS_HOST : joi.string().required(),
-        PRODUCTS_MS_PORT : joi.number().required(),
+        NATS_SERVERS     : joi.array().items(joi.string()).required(),
     })
     .unknown(true);
 
-const { error, value } = envsSchema.validate(process.env);
+const { error, value } = envsSchema.validate({
+    ...process.env,
+    NATS_SERVERS: process.env.NATS_SERVERS?.split(','), // split NATS_SERVERS by comma
+});
 
 if (error) {
     throw new Error(`Config validation error: ${error.message}`);
@@ -53,6 +54,5 @@ export const envs = {
     logging       : envVars.LOGGING,
     synchronize   : envVars.DB_SYNCHRONIZE,
     autoLoadModels: envVars.DB_AUTOLOADMODELS,
-    productsMsHost: envVars.PRODUCTS_MS_HOST,
-    productsMsPort: envVars.PRODUCTS_MS_PORT,
+    natsServers   : envVars.NATS_SERVERS,
 };
